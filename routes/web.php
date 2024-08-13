@@ -52,7 +52,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('partners', PartnersController::class);
     Route::get('store.partners/{id}', [StoreController::class,'store_partners'])->name('store.partners');
     Route::get('/autocomplete', [PartnersController::class, 'autocomplete'])->name('autocomplete');
-    Route::post('store.partnters', [StoreController::class,'store_partnters'])->name('store.partnters');
+    Route::post('/store/partners', [StoreController::class, 'storePartners'])->name('store.partnters');
+
     
    
     

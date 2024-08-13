@@ -7,6 +7,7 @@ use App\Models\CompanyType;
 use App\Models\Store;
 use App\Models\Partners;
 use App\Models\Province;
+use App\Models\PartnerStore;
 use App\Http\Requests\StoreRequest;
 use App\Http\Requests\StoreUpdateRequest;
 use DB;
@@ -191,6 +192,34 @@ class StoreController extends Controller
     } catch (\Exception $e) {
         return $e->getMessage();
       }
+    }
+    public function storePartners(Request $request)
+    {
+        // Validate the input
+        $validated = $request->validate([
+            'store_id' => 'required|exists:store,id',
+            'partners_id' => 'required|array',
+            'partners_id.*' => 'required|exists:partners,id',
+            'percentage' => 'required|array',
+            'percentage.*' => 'required|numeric|min:0|max:100',
+            'share_value' => 'required|array',
+            'share_value.*' => 'required|numeric|min:0',
+        ]);
+        DB::transaction(function () use ($request) {
+        // Clear existing partners for the store
+        PartnerStore::where('store_id', $request->store_id)->delete();
+
+        // Loop through partners and save to the database
+        foreach ($request->partners_id as $index => $partnerId) {
+            PartnerStore::create([
+                'store_id' => $request->store_id,
+                'partner_id' => $partnerId,
+                'percentage' => $request->percentage[$index],
+                'share_value' => $request->share_value[$index],
+            ]);
+        }
+    }); 
+        return redirect('store')->with('success', 'Partners updated successfully!');
     }
     
     

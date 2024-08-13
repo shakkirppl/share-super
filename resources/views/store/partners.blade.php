@@ -20,21 +20,21 @@
                             </p>
                         </div>
                 
-                       
                         <hr>
                         <div class="form-group">
-                            <label for="total_share_value">Total Partners</label>
-                            <input type="number" class="form-control" id="total_share_partners" name="total_share_partners" value="{{ $store->no_of_partners }}" step="any"  readonly />
+                            <label for="total_share_partners">Total Partners</label>
+                            <input type="number" class="form-control" id="total_share_partners" name="total_share_partners" value="0" step="any" />
                         </div>
                         <!-- Total Share Value Input -->
                         <div class="form-group">
                             <label for="total_share_value">Total Share Value</label>
-                            <input type="number" class="form-control" id="total_share_value" name="total_share_value" step="any" value="{{ $store->share_value }}" placeholder="Enter total share value" />
+                            <input type="number" class="form-control" id="total_share_value" name="total_share_value" step="any" value="0" placeholder="Enter total share value" />
                         </div>
                        
                         <div class="table-responsive">
-                        <form class="form-sample"  action="{{ route('store.partnters') }}" method="post" enctype="multipart/form-data"  >
-                        {{csrf_field()}}
+                        <form class="form-sample" action="{{ route('store.partnters') }}" method="post" enctype="multipart/form-data">
+    {{ csrf_field() }}
+    <input type="hidden" name="store_id" value="{{ $store->id }}">
                             <div class="table-responsive">
                                 <table class="table table-hover" width="100%" id="partner">
                                     <thead>
@@ -42,29 +42,10 @@
                                         <th width="50%">Partners Name</th>
                                         <th width="15%">Percentage</th>
                                         <th width="30%">Share Value</th>
+                                        <th width="5%">Action</th>
                                     </thead>
                                     <tbody>
-                                        @for ($i = 0; $i < $store->no_of_partners; $i++)
-                                            <tr>
-                                                <td>{{ $i + 1 }}</td>
-                                                <td>
-                                                <select class="form-control form-control-lg partner-id" id="partners_id" name="partners_id[]">
-                                                @foreach($partners as $partner)
-                                                <option>Select Partner</option>
-                                             <option value="{{$partner->id}}">{{$partner->name}}</option>
-                                             @endforeach
-                                                 </select>
-                                                    <!-- <input type="hidden" class="form-control partner-id" name="partners_id[]" />
-                                                    <input type="text" class="form-control partner" name="partners[]" /> -->
-                                                </td>
-                                                <td>
-                                                    <input type="number" class="form-control percentage" name="percentage[]" step="any" />
-                                                </td>
-                                                <td>
-                                                    <input type="number" class="form-control share_value" name="share_value[]" step="any" readonly/>
-                                                </td>
-                                            </tr>
-                                        @endfor
+                                        <!-- Rows will be dynamically added here -->
                                     </tbody>
                                 </table>
                             </div>
@@ -87,57 +68,99 @@
 
 <script>
 $(document).ready(function() {
-    $('.partner').autocomplete({
-        source: function(request, response) {
-            $.ajax({
-                url: "{{ route('autocomplete') }}",
-                dataType: "json",
-                data: {
-                    term: request.term
-                },
-                success: function(data) {
-                    response(data);
-                }
-            });
-        },
-        minLength: 2,
-        select: function(event, ui) {
-            $(this).val(ui.item.value);
-            $(this).siblings('.partner-id').val(ui.item.id);
-            return false;
-        }
+    // Initialize table rows based on total_share_partners value
+    updateTableRows($('#total_share_partners').val());
+
+    // Handle change in total_share_partners
+    $('#total_share_partners').on('input', function() {
+        var numRows = $(this).val();
+        updateTableRows(numRows);
     });
 
+    // Add new row
+    function updateTableRows(count) {
+        var $tableBody = $('#partner tbody');
+        var currentRowCount = $tableBody.find('tr').length;
+        
+        if (count > currentRowCount) {
+            // Add rows
+            for (var i = currentRowCount + 1; i <= count; i++) {
+                $tableBody.append(createRow(i));
+            }
+        } else if (count < currentRowCount) {
+            // Remove rows
+            $tableBody.find('tr').slice(count).remove();
+        }
+    }
+
+    // Create a new row HTML
+    function createRow(index) {
+        return `
+            <tr>
+                <td>${index}</td>
+                <td>
+                    <select class="form-control form-control-lg partner-id" name="partners_id[]">
+                        @foreach($partners as $partner)
+                            <option value="{{ $partner->id }}">{{ $partner->name }}</option>
+                        @endforeach
+                    </select>
+                </td>
+                <td>
+                    <input type="number" class="form-control percentage" name="percentage[]" step="any" />
+                </td>
+                <td>
+                    <input type="number" class="form-control share_value" name="share_value[]" step="any" readonly />
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger remove-row">Remove</button>
+                </td>
+            </tr>
+        `;
+    }
+
     // Calculate share value based on percentage and total share value
-    $('.percentage').on('input', function() {
+    $(document).on('input', '.percentage', function() {
         var totalShareValue = parseFloat($('#total_share_value').val());
         var percentage = parseFloat($(this).val());
         var shareValue = (totalShareValue * percentage) / 100;
-        
         $(this).closest('tr').find('.share_value').val(shareValue.toFixed(2));
     });
-    $('form').submit(function(){
-          $(this).find('button[type="submit"]').attr('disabled','disabled');
 
-          var per_cntg=grand_percentage_value();
+    // Remove row
+    $(document).on('click', '.remove-row', function() {
+        $(this).closest('tr').remove();
+        updateRowNumbers();
+    });
 
-   if(per_cntg!=100){    alert('Total Percentage should be 100');   $(this).find('button[type="submit"]').removeAttr('disabled');
-      return false;}
-
-     $('.percentage').each(function(){
-CheckDecimal($(this).val());
-       });
-         });
-    function grand_percentage_value(){
-        var total = 0;
-        $('.percentage').each(function(){
-            
-            total+= parseFloat($(this).val());
-            
+    // Update row numbers
+    function updateRowNumbers() {
+        $('#partner tbody tr').each(function(index) {
+            $(this).find('td:first').text(index + 1);
         });
-       
-        return total;
+    }
 
+    // Validate total percentage before submitting
+    $('form').submit(function() {
+        $(this).find('button[type="submit"]').attr('disabled', 'disabled');
+
+        var per_cntg = grand_percentage_value();
+        if (per_cntg != 100) {
+            alert('Total Percentage should be 100');
+            $(this).find('button[type="submit"]').removeAttr('disabled');
+            return false;
+        }
+
+        $('.percentage').each(function() {
+            CheckDecimal($(this).val());
+        });
+    });
+
+    function grand_percentage_value() {
+        var total = 0;
+        $('.percentage').each(function() {
+            total += parseFloat($(this).val());
+        });
+        return total;
     }
 });
 </script>
