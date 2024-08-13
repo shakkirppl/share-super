@@ -46,8 +46,7 @@ class StoreRequest extends FormRequest
             'username' => ['required','string', Rule::unique('store')->ignore($storeId),
             ],
             'password' => ['required', 'string'],
-            'suscription_end_date' => ['required'],
-            'no_of_users' => ['required', 'integer'],
+           
         ];
     }
     public function messages()
@@ -61,8 +60,7 @@ class StoreRequest extends FormRequest
             'email.required' => 'Email is required ',
             'username.required' => 'User Name (Using Email Format) is required',
             'password.required' => 'Password is required',
-            'suscription_end_date.required' => 'Suscription End Date is required',
-            'no_of_users.required' => 'No of User is required',
+           
 
         ];
     }
