@@ -172,7 +172,7 @@
                       </div>
                       <div class="col-md-12">
                         <div class="form-group row">
-                          <label class="col-sm-2 col-form-label required"> Share Value</label>
+                          <label class="col-sm-2 col-form-label required"> Total Capita</label>
                           <div class="col-sm-9">
                             <input type="number" class="form-control" placeholder="Share Value" name="share_value"  required="true"  value="{{old('share_value')}}" />
                           </div>

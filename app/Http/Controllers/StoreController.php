@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\CompanyType;
 use App\Models\Store;
-use App\Models\Renewal;
+use App\Models\Partners;
 use App\Models\Province;
 use App\Http\Requests\StoreRequest;
 use App\Http\Requests\StoreUpdateRequest;
-use App\Http\Requests\RenewelRequest;
 use DB;
 use Carbon\Carbon;
 use App\Helper\File;
@@ -187,7 +186,8 @@ class StoreController extends Controller
     {
         try {
             $store = Store::find($id);
-        return view('store.partners',['store'=>$store]);
+            $partners=Partners::get();
+        return view('store.partners',['store'=>$store,'partners'=>$partners]);
     } catch (\Exception $e) {
         return $e->getMessage();
       }

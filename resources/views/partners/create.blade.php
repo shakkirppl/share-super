@@ -98,13 +98,9 @@
      
                       <div class="col-md-12">
                         <div class="form-group row">
-                          <label class="col-sm-2 col-form-label required">Province </label>
+                          <label class="col-sm-2 col-form-label required">Nationality </label>
                           <div class="col-sm-9">
-                        <select class="form-control form-control-lg" id="province_id" name="province_id">
-                          @foreach($province as $province)
-                      <option value="{{$province->id}}">{{$province->name}}</option>
-                   @endforeach
-                       </select>
+                          <input type="text" class="form-control" placeholder="Nationality" name="nationality"  required="true" value="{{old('nationality')}}"  />
                           </div>
                         </div>
                       </div>

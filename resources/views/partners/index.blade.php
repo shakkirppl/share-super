@@ -38,7 +38,7 @@
                           <th>Address</th>
                           <th>Contact</th>
                           <th>E Mail</th>
-                          <th>Province</th>
+                          <th>Nationality</th>
                           <th>Action</th>
                         </tr>
                       </thead>
@@ -52,7 +52,7 @@
                             <td class="name">{{$result->address}}</td>
                             <td class="name">{{$result->contact_number}}</td>
                             <td class="name">{{$result->email}}</td>
-                            <td class="name"> @foreach($result->province as $province){{$province->name}} @endforeach</td>
+                            <td class="name"> {{$result->nationality}}</td>
  
                       
                             <td><form action="{{ route('partners.destroy',$result->id) }}" method="post">

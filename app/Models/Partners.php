@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Partners extends Model
 {
     protected $table = 'partners';
-    protected $fillable = ['id', 'name','code','main_image','address','contact_number','whatsapp_number','email','province_id','store_id','status'];
+    protected $fillable = ['id', 'name','code','main_image','address','contact_number','whatsapp_number','email','nationality','store_id','status'];
     use HasFactory,SoftDeletes;
     public static function create_data($request,$image)
     {

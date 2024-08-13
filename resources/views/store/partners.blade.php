@@ -24,12 +24,12 @@
                         <hr>
                         <div class="form-group">
                             <label for="total_share_value">Total Partners</label>
-                            <input type="number" class="form-control" id="total_share_partners" name="total_share_partners" value="{{ $store->no_of_partners }}" step="any" placeholder="Enter total share value" />
+                            <input type="number" class="form-control" id="total_share_partners" name="total_share_partners" value="{{ $store->no_of_partners }}" step="any"  readonly />
                         </div>
                         <!-- Total Share Value Input -->
                         <div class="form-group">
                             <label for="total_share_value">Total Share Value</label>
-                            <input type="number" class="form-control" id="total_share_value" name="total_share_value" step="any" placeholder="Enter total share value" />
+                            <input type="number" class="form-control" id="total_share_value" name="total_share_value" step="any" value="{{ $store->share_value }}" placeholder="Enter total share value" />
                         </div>
                        
                         <div class="table-responsive">
@@ -48,8 +48,14 @@
                                             <tr>
                                                 <td>{{ $i + 1 }}</td>
                                                 <td>
-                                                    <input type="hidden" class="form-control partner-id" name="partners_id[]" />
-                                                    <input type="text" class="form-control partner" name="partners[]" />
+                                                <select class="form-control form-control-lg partner-id" id="partners_id" name="partners_id[]">
+                                                @foreach($partners as $partner)
+                                                <option>Select Partner</option>
+                                             <option value="{{$partner->id}}">{{$partner->name}}</option>
+                                             @endforeach
+                                                 </select>
+                                                    <!-- <input type="hidden" class="form-control partner-id" name="partners_id[]" />
+                                                    <input type="text" class="form-control partner" name="partners[]" /> -->
                                                 </td>
                                                 <td>
                                                     <input type="number" class="form-control percentage" name="percentage[]" step="any" />
@@ -110,6 +116,29 @@ $(document).ready(function() {
         
         $(this).closest('tr').find('.share_value').val(shareValue.toFixed(2));
     });
+    $('form').submit(function(){
+          $(this).find('button[type="submit"]').attr('disabled','disabled');
+
+          var per_cntg=grand_percentage_value();
+
+   if(per_cntg!=100){    alert('Total Percentage should be 100');   $(this).find('button[type="submit"]').removeAttr('disabled');
+      return false;}
+
+     $('.percentage').each(function(){
+CheckDecimal($(this).val());
+       });
+         });
+    function grand_percentage_value(){
+        var total = 0;
+        $('.percentage').each(function(){
+            
+            total+= parseFloat($(this).val());
+            
+        });
+       
+        return total;
+
+    }
 });
 </script>
 @endsection
