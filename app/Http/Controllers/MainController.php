@@ -103,12 +103,14 @@ class MainController extends Controller
       $profit=$income-$expense;
      
       $invest_detail=PartnerStore::where('partner_id',$partner_id)->where('store_id',$stor->id)->first();
+      if($invest_detail){
       $partnerDetail[] = [
         'name' => $stor->name,
         'percentage' => $invest_detail->percentage,
         'profit' => ($profit*$invest_detail->percentage)/100,
     ];
       }
+    }
     }
 
    
