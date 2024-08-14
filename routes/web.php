@@ -7,6 +7,7 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\PartnersController;
+use App\Http\Controllers\MainController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/autocomplete', [PartnersController::class, 'autocomplete'])->name('autocomplete');
     Route::post('/store/partners', [StoreController::class, 'storePartners'])->name('store.partnters');
 
+    Route::get('monthly-share-report-store-wise', [MainController::class,'monthly_share_report_store_wise'])->name('monthly-share-report-store-wise');
+    Route::get('monthly-share-report-partner-wise', [MainController::class,'monthly_share_report_partner_wise'])->name('monthly-share-report-partner-wise');
     
    
     

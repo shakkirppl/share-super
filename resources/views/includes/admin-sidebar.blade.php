@@ -51,7 +51,21 @@
             </a>
           </li>
   
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#collection_report" aria-expanded="false" aria-controls="charts">
+              <i class="icon-bar-graph menu-icon"></i>
+              <span class="menu-title">Monthly Report</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="collection_report">
+              <ul class="nav flex-column sub-menu">
+
+              <li class="nav-item"> <a class="nav-link" href="{{URL::to('monthly-share-report-store-wise')}}">Shop Report</a></li>
+              <li class="nav-item"> <a class="nav-link" href="{{URL::to('monthly-share-report-partner-wise')}}">Partner Report</a></li>
+              </ul>
+            </div>
      
+          </li>
           
          
         </ul>
