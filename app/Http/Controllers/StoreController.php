@@ -188,7 +188,10 @@ class StoreController extends Controller
         try {
             $store = Store::find($id);
             $partners=Partners::get();
-        return view('store.partners',['store'=>$store,'partners'=>$partners]);
+            $partnerStore=PartnerStore::where('store_id',$id)->get();
+            $total_share_partners=PartnerStore::where('store_id',$id)->count();
+            $total_share_value=PartnerStore::where('store_id',$id)->sum('share_value');
+        return view('store.partners',['store'=>$store,'partners'=>$partners,'partnerStore'=>$partnerStore,'total_share_partners'=>$total_share_partners,'total_share_value'=>$total_share_value]);
     } catch (\Exception $e) {
         return $e->getMessage();
       }

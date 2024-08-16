@@ -60,8 +60,8 @@
             <div class="collapse" id="collection_report">
               <ul class="nav flex-column sub-menu">
 
-              <li class="nav-item"> <a class="nav-link" href="{{URL::to('monthly-share-report-store-wise')}}">Shop Report</a></li>
-              <li class="nav-item"> <a class="nav-link" href="{{URL::to('monthly-share-report-partner-wise')}}">Partner Report</a></li>
+              <li class="nav-item"> <a class="nav-link" href="{{URL::to('monthly-share-report-store-wise')}}">Income Statement</a></li>
+              <li class="nav-item"> <a class="nav-link" href="{{URL::to('monthly-share-report-partner-wise')}}">Partner Statement</a></li>
               </ul>
             </div>
      

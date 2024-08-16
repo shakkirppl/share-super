@@ -23,18 +23,18 @@
                         <hr>
                         <div class="form-group">
                             <label for="total_share_partners">Total Partners</label>
-                            <input type="number" class="form-control" id="total_share_partners" name="total_share_partners" value="0" step="any" />
+                            <input type="number" class="form-control" id="total_share_partners" name="total_share_partners" value="{{$total_share_partners}}" step="any" />
                         </div>
                         <!-- Total Share Value Input -->
                         <div class="form-group">
                             <label for="total_share_value">Total Share Value</label>
-                            <input type="number" class="form-control" id="total_share_value" name="total_share_value" step="any" value="0" placeholder="Enter total share value" />
+                            <input type="number" class="form-control" id="total_share_value" name="total_share_value" step="any" value="{{$total_share_value}}" placeholder="Enter total share value" />
                         </div>
                        
                         <div class="table-responsive">
                         <form class="form-sample" action="{{ route('store.partnters') }}" method="post" enctype="multipart/form-data">
-    {{ csrf_field() }}
-    <input type="hidden" name="store_id" value="{{ $store->id }}">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="store_id" value="{{ $store->id }}">
                             <div class="table-responsive">
                                 <table class="table table-hover" width="100%" id="partner">
                                     <thead>
@@ -45,10 +45,41 @@
                                         <th width="5%">Action</th>
                                     </thead>
                                     <tbody>
+                                    @if(count($partnerStore))
+                                    @foreach($partnerStore as $key=>$partnersDetail)
+                                    <tr>
+                                        <td>{{$key+1}}</td>
+                                        <td>
+                                            <select class="form-control form-control-lg partner-id" name="partners_id[]">
+                                                @foreach($partners as $partner)
+                                                @if($partner->id==$partnersDetail->partner_id)
+                                                <option selected value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                @else
+                                                    <option value="{{ $partner->id }}">{{ $partner->name }}</option>
+                                                @endif
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control percentage" name="percentage[]" step="any" value="{{$partnersDetail->percentage}}" />
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control share_value" name="share_value[]" step="any" value="{{$partnersDetail->share_value}}" readonly />
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger remove-row">Remove</button>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                    @else
+                                    <tr><td colspan="2">Sorry, No Records found!</td></tr>
+                                    @endif
+                                    
                                         <!-- Rows will be dynamically added here -->
                                     </tbody>
                                 </table>
                             </div>
+                            <button type="button" class="btn btn-secondary mb-2" id="addRowButton">Add Row</button>
                             <button type="submit" class="btn btn-primary mb-2 submit">Submit<i class="fas fa-save"></i></button>
                         </form>
                         </div>
@@ -68,6 +99,7 @@
 
 <script>
 $(document).ready(function() {
+
     // Initialize table rows based on total_share_partners value
     updateTableRows($('#total_share_partners').val());
 
@@ -75,6 +107,14 @@ $(document).ready(function() {
     $('#total_share_partners').on('input', function() {
         var numRows = $(this).val();
         updateTableRows(numRows);
+    });
+
+    // Add new row when Add Row button is clicked
+    $('#addRowButton').on('click', function() {
+        var $tableBody = $('#partner tbody');
+        var newRowNumber = $tableBody.find('tr').length + 1;
+        $tableBody.append(createRow(newRowNumber));
+        updateRowNumbers();
     });
 
     // Add new row
@@ -91,6 +131,7 @@ $(document).ready(function() {
             // Remove rows
             $tableBody.find('tr').slice(count).remove();
         }
+        updateRowNumbers();
     }
 
     // Create a new row HTML
