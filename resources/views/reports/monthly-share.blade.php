@@ -23,7 +23,7 @@
 
                       <div class="col-md-4 col-sm-6 col-xs-12 mt-2">
                       <select class="form-control" name="month" id="month">
-                    <option>Select Month</option>
+                    <option value=''>Select Month</option>
                     @foreach($months as $key => $month)
                  <option value="{{ $month }}">{{ $month }}</option>
                     @endforeach
@@ -46,7 +46,7 @@
 </div>
 @endif
  
-                 
+                 <p>Selected Month:{{$selectmonth}}</p>
                   <p class="card-description">
                 
                   </p>

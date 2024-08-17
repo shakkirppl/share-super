@@ -23,7 +23,7 @@ class MainController extends Controller
   
  public function monthly_share_report_store_wise(Request $request)
     {
-        
+      // return $request->all();
         try {
           $user=User::find(Auth::user()->id);
           $store=Store::get();
@@ -60,8 +60,8 @@ class MainController extends Controller
     ];
       }
 
-   
-      return view('reports.monthly-share',['months'=>$months, 'stores' => $storeData,'month'=>$month]);
+ 
+      return view('reports.monthly-share',['months'=>$months, 'stores' => $storeData,'selectmonth'=>$month]);
 
     } catch (\Exception $e) {
         return $e->getMessage();
@@ -69,7 +69,7 @@ class MainController extends Controller
     }
     public function monthly_share_report_partner_wise(Request $request)
     {
-        
+    // return $request->all();
         try {
           $user=User::find(Auth::user()->id);
           $store=Store::get();
@@ -85,9 +85,13 @@ class MainController extends Controller
               $months->push($start->format('F Y')); // e.g., "January 2024"
               $start->addMonth();
           }
+         
           $month = $request->month;
           $partner_id = $request->partner_id;
           
+          if($month)
+          {
+            
         $stores=[];
 // Get the start date of the month
       $startDate = Carbon::parse($month)->startOfMonth()->toDateString();
@@ -95,26 +99,42 @@ class MainController extends Controller
 // Get the end date of the month
       $endDate = Carbon::parse($month)->endOfMonth()->toDateString();
       $partnerDetail=[];
-      if($partner_id){
-      foreach($store as $stor)
+      $partnerStore=PartnerStore::with('partnr','store')->Partner($partner_id)->get();
+      foreach($partnerStore as $partner)
       { 
-      $income=ReceiptVoucher::where('store_id',$stor->id)->WhereBetween('in_date',[$startDate,$endDate])->sum('total_amount');
-      $expense=PaymentVoucher::where('store_id',$stor->id)->WhereBetween('in_date',[$startDate,$endDate])->sum('total_amount');
+      $income=ReceiptVoucher::where('store_id',$partner->store_id)->WhereBetween('in_date',[$startDate,$endDate])->sum('total_amount');
+      $expense=PaymentVoucher::where('store_id',$partner->store_id)->WhereBetween('in_date',[$startDate,$endDate])->sum('total_amount');
       $profit=$income-$expense;
      
-      $invest_detail=PartnerStore::where('partner_id',$partner_id)->where('store_id',$stor->id)->first();
+      $invest_detail=PartnerStore::Partner($partner->partner_id)->where('store_id',$partner->store_id)->first();
       if($invest_detail){
+        foreach($partner->store as $stor)
+      { 
+        $storeName=$stor->name;
+      }
+      foreach($partner->partnr as $partn)
+      { 
+        $partnerName=$partn->name;
+      }
+        
       $partnerDetail[] = [
-        'name' => $stor->name,
+        'name' => $storeName,
+        'partnername' => $partnerName,
         'percentage' => $invest_detail->percentage,
         'profit' => ($profit*$invest_detail->percentage)/100,
     ];
       }
     }
-    }
+  }
+  else{
+    $partnerDetail=[];
+    $partners=[];
+    $month='';
+  }
+ 
 
    
-      return view('reports.monthly-share-partners',['months'=>$months, 'partnerDetail' => $partnerDetail,'month'=>$month,'partners'=>$partners]);
+      return view('reports.monthly-share-partners',['months'=>$months, 'partnerDetail' => $partnerDetail,'selectmonth'=>$month,'partners'=>$partners]);
 
     } catch (\Exception $e) {
         return $e->getMessage();
@@ -138,7 +158,7 @@ class MainController extends Controller
    $payment=PaymentVoucher::with('expense')->Store()->WhereBetween('in_date',[$startDate,$endDate])->get();
 
    $partnerStore=PartnerStore::with('partner')->where('store_id',$store->id)->get();
-   return view('reports.monthly-report-detail',['receipt'=>$receipt,'payment'=>$payment,'month'=>$month]);
+   return view('reports.monthly-report-detail',['receipt'=>$receipt,'payment'=>$payment,'selectmonth'=>$month]);
 
  } catch (\Exception $e) {
      return $e->getMessage();

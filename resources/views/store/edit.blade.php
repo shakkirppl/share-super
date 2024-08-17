@@ -163,6 +163,14 @@
                       </div>
                       <div class="col-md-12">
                         <div class="form-group row">
+                          <label class="col-sm-2 col-form-label required"> Password</label>
+                          <div class="col-sm-9">
+                            <input type="text" class="form-control" placeholder="Password" name="password" id="password"  required="true" value="{{$store->password}}"  />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group row">
                           <label class="col-sm-2 col-form-label"> Description</label>
                           <div class="col-sm-9">
                             <textarea class="form-control" name="description" >{{$store->description}} </textarea>

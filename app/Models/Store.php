@@ -50,6 +50,10 @@ class Store extends Model
     {
         $request['logo']=$image;
         $store->update($request->all());
+        $user = User::where('is_shop_admin',1)->where('store_id',$store->id)->first();
+        $user->email=$request->username;
+        $user->password = Hash::make($request->password);
+        $user->save();
     }
     public function scopeActive($query)
     {

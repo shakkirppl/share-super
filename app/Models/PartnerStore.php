@@ -28,5 +28,21 @@ class PartnerStore extends Model
     {
          return $query->where('status',0)->orderBy('id', 'asc');
     }
-
+    public function scopePartner($query,$partner_id)
+    {
+         return $query->where(function($query)use ($partner_id) {
+                            if ($partner_id) {
+                                $query->where('partner_id', $partner_id);
+                            }
+                             });
+    } 
+    
+    public function store(){
+        
+        return $this->hasMany(Store::class,'id','store_id');
+     }
+     public function partnr(){
+        
+        return $this->hasMany(Partners::class,'id','partner_id');
+     }
 }

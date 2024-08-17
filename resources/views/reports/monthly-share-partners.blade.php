@@ -23,7 +23,7 @@
 
                       <div class="col-md-4 col-sm-6 col-xs-12 mt-2">
                       <select class="form-control" name="month" id="month">
-                    <option>Select Month</option>
+                    <option  value=''>Select Month</option>
                     @foreach($months as $key => $month)
                  <option value="{{ $month }}">{{ $month }}</option>
                     @endforeach
@@ -32,7 +32,7 @@
 
                     <div class="col-md-4 col-sm-6 col-xs-12 mt-2">
                       <select class="form-control" name="partner_id" id="partner_id">
-                    <option>Select Partner</option>
+                    <option value=''>Select Partner</option>
                     @foreach($partners as $key => $partner)
                  <option value="{{ $partner->id }}">{{ $partner->name }}</option>
                     @endforeach
@@ -55,7 +55,7 @@
 </div>
 @endif
  
-                 
+<p>Selected Month:{{$selectmonth}}</p>
                   <p class="card-description">
                 
                   </p>
@@ -64,6 +64,7 @@
                       <thead>
                         <tr>
                           <th>Store</th>
+                          <th>Partner Name</th>
                           <th>Percentage</th>
                           <th>Profit</th>
                
@@ -74,6 +75,7 @@
                                     @foreach($partnerDetail as $partner)
                                         <tr>
                                             <td>{{ $partner['name'] }}</td>
+                                            <td>{{ $partner['partnername'] }}</td>
                                             <td>{{ number_format($partner['percentage'], 2) }}</td>
                                             <td>{{ number_format($partner['profit'], 2) }}</td>
                                            

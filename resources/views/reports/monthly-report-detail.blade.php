@@ -11,7 +11,7 @@
         <div class="col-lg-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                <h4 class="card-title center-text">Month: {{ $month }}</h4>
+                <h4 class="card-title center-text">Month: {{ $selectmonth }}</h4>
                     @if($message = Session::get('success'))
                     <div class="alert alert-success">
                         <p>{{ $message }}</p>
