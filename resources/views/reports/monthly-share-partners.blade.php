@@ -54,8 +54,20 @@
   <p>{{$message}}</p>
 </div>
 @endif
- 
+<form class="form-sample"  action="{{url('monthly-share-report-partner-wise-generate-pdf')}}" method="get" >
+{{csrf_field()}}
 <p>Selected Month:{{$selectmonth}}</p>
+<input type="text" class="form-control"  name="select_month" id="select_month" value="{{$selectmonth}}"  required="true" />
+<div class="col-md-2 col-sm-6 col-xs-12 mt-2">
+                    <div class="submitbutton">
+                    <button type="submit" class="btn btn-primary mb-2 submit">Generate PDF
+
+
+</button>
+</div>
+</div>
+</form>    
+
                   <p class="card-description">
                 
                   </p>

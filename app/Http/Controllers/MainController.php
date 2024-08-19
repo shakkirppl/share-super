@@ -15,6 +15,10 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Artisan;
 use Illuminate\Support\Collection;
+use PDF;
+use ZipArchive;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 class MainController extends Controller
 {
     //
@@ -108,14 +112,18 @@ class MainController extends Controller
      
       $invest_detail=PartnerStore::Partner($partner->partner_id)->where('store_id',$partner->store_id)->first();
       if($invest_detail){
-        foreach($partner->store as $stor)
-      { 
-        $storeName=$stor->name;
-      }
-      foreach($partner->partnr as $partn)
-      { 
-        $partnerName=$partn->name;
-      }
+        $partnerName = $partner->partnr ? $partner->partnr->name : 'Unknown Partner';
+        $storeName = $partner->store ? $partner->store->name : 'Unknown Store';
+      //   foreach($partner->store as $stor)
+      // { 
+        
+      //   $storeName=$stor->name;
+      // }
+      // foreach($partner->partnr as $partn)
+      // { 
+      
+      //   $partnerName=$partn->name;
+      // }
         
       $partnerDetail[] = [
         'name' => $storeName,
@@ -140,8 +148,168 @@ class MainController extends Controller
         return $e->getMessage();
       }
     }
+    // public function monthly_share_report_partner_wise_generate_pdf(Request $request)
+    // {
+    //     try {
+    //         $month = $request->select_month;
+    //         $directoryPath = storage_path('app/public/reports');
     
+    //         if ($month) {
+    //             $startDate = Carbon::parse($month)->startOfMonth()->toDateString();
+    //             $endDate = Carbon::parse($month)->endOfMonth()->toDateString();
+    
+    //             // Create the directory if it doesn't exist
+    //             if (!File::exists($directoryPath)) {
+    //                 File::makeDirectory($directoryPath, 0755, true);
+    //             }
+    
+    //             // Initialize ZIP file
+    //             $zip = new ZipArchive;
+    //             $zipFileName = 'monthly_share_reports_' . $month . '.zip';
+    //             $zipFilePath = $directoryPath . '/' . $zipFileName;
+    
+    //             if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+    //               $partners=Partners::get();
+    //               foreach ($partners as $part) {
+    //                 $partnerStores = PartnerStore::with('store')->where('partner_id',$part->id)->get(); 
+    //                 foreach ($partnerStores as $partner) {
+    //                   $income = ReceiptVoucher::where('store_id', $partner->store_id)
+    //                   ->whereBetween('in_date', [$startDate, $endDate])
+    //                   ->sum('total_amount');
+
+    //                 $expense = PaymentVoucher::where('store_id', $partner->store_id)
+    //                    ->whereBetween('in_date', [$startDate, $endDate])
+    //                    ->sum('total_amount');
+
+    //               $profit = $income - $expense;
+
+    //                 $invest_detail = PartnerStore::where('partner_id', $partner->partner_id)
+    //                        ->where('store_id', $partner->store_id)
+    //                        ->first();
+    //                        if ($invest_detail) {
+    //                         $data[] = [
+    //                           'title' => 'Monthly Share Report',
+    //                           'date' => Carbon::now()->format('m/d/Y'),
+    //                           'store_name' => 'test',
+    //                           'percentage' => $invest_detail->percentage,
+    //                           'profit' => ($profit * $invest_detail->percentage) / 100,
+    //                       ];
+    //                        }
+    //                 }
+    //                 return view('pdf.monthly_share_report', ['data'=>$data]);
+    //                 $pdf = PDF::loadView('pdf.monthly_share_report', $data);
+    //                  // Generate a temporary file for this PDF
+    //                  $fileName = 'monthly_share_report_' . $partnerName . '_' . $storeName . '.pdf';
+    //                  $tempFilePath = $directoryPath . '/' . $fileName;
+    //                  $pdf->save($tempFilePath);
+
+    //                  // Add the PDF to the ZIP
+    //                  $zip->addFile($tempFilePath, $fileName);
+    //                 // return  $data;
+    //               }
+    //               $zip->close();
       
+    //                 // Return the ZIP file for download
+    //                 return response()->download($zipFilePath)->deleteFileAfterSend(true);
+    //             } else {
+    //                 return back()->with('error', 'Failed to create ZIP file.');
+    //             }
+    //         } else {
+    //             return back()->with('error', 'Month is required.');
+    //         }
+    //     } catch (\Exception $e) {
+    //         return $e->getMessage();
+    //     }
+    // }
+    
+    public function monthly_share_report_partner_wise_generate_pdf(Request $request)
+    {
+        try {
+        //  return $request->all();
+            $month = $request->select_month;
+            $directoryPath = storage_path('app/public/reports');
+    
+            if ($month) {
+                $startDate = Carbon::parse($month)->startOfMonth()->toDateString();
+                $endDate = Carbon::parse($month)->endOfMonth()->toDateString();
+                if (preg_match('/^(\w+)\s(\d{4})$/', $month, $matches)) {
+                  $month = $matches[1]; // "August"
+                  $year = $matches[2];  // "2024"
+              } else {
+                  return response()->json(['error' => 'Invalid date format'], 400);
+              }
+                // Create the directory if it doesn't exist
+                if (!File::exists($directoryPath)) {
+                    File::makeDirectory($directoryPath, 0755, true);
+                }
+    
+                // Initialize ZIP file
+                $zip = new ZipArchive;
+                $zipFileName = 'monthly_share_reports_' . $month . '.zip';
+                $zipFilePath = $directoryPath . '/' . $zipFileName;
+    
+                if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+                    $partners = Partners::get();
+    
+                    foreach ($partners as $partner) {
+                        $data = []; // Initialize data array for each partner
+                        $partnerStores = PartnerStore::with('store')->where('partner_id', $partner->id)->get();
+    $partnerName=$partner->name;
+    $contact_number=$partner->contact_number;
+                        foreach ($partnerStores as $store) {
+                            $income = ReceiptVoucher::where('store_id', $store->store_id)
+                                ->whereBetween('in_date', [$startDate, $endDate])
+                                ->sum('total_amount');
+    
+                            $expense = PaymentVoucher::where('store_id', $store->store_id)
+                                ->whereBetween('in_date', [$startDate, $endDate])
+                                ->sum('total_amount');
+    
+                            $profit = $income - $expense;
+    
+                            $invest_detail = PartnerStore::where('partner_id', $partner->id)
+                                ->where('store_id', $store->store_id)
+                                ->first();
+    
+                            if ($invest_detail) {
+                                $data[] = [
+                                    'title' => 'Monthly Share Report',
+                                    'date' => $endDate,
+                                    'year'=>$year,
+                                    'store_name' => $store->store->name,
+                                    'percentage' => $invest_detail->percentage,
+                                    'profit' => ($profit * $invest_detail->percentage) / 100,
+                                ];
+                            }
+                        }
+                        
+                        //  return view('pdf.monthly_share_report',['data'=>$data,'month'=>$month,'year'=>$year,'partnerName'=>$partnerName,'contact_number'=>$contact_number]);
+                        if (!empty($data)) {
+                            $pdf = PDF::loadView('pdf.monthly_share_report', ['data' => $data,'month'=>$month,'year'=>$year,'partnerName'=>$partnerName,'contact_number'=>$contact_number]);
+                            $fileName = 'monthly_share_report_' . $partner->name . '.pdf';
+                            $tempFilePath = $directoryPath . '/' . $fileName;
+                            $pdf->save($tempFilePath);
+    
+                            // Add the PDF to the ZIP
+                            $zip->addFile($tempFilePath, $fileName);
+                        }
+                    }
+    
+                    $zip->close();
+    
+                    // Return the ZIP file for download
+                    return response()->download($zipFilePath)->deleteFileAfterSend(true);
+                } else {
+                    return back()->with('error', 'Failed to create ZIP file.');
+                }
+            } else {
+                return back()->with('error', 'Month is required.');
+            }
+        } catch (\Exception $e) {
+            return response()->json(['data' => [], 'success' => false, 'messages' => [$e->getMessage()]]);
+        }
+    }
+    
  public function monthly_report_detail($month)
  {
      

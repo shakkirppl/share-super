@@ -37,12 +37,13 @@ class PartnerStore extends Model
                              });
     } 
     
-    public function store(){
-        
-        return $this->hasMany(Store::class,'id','store_id');
-     }
-     public function partnr(){
-        
-        return $this->hasMany(Partners::class,'id','partner_id');
-     }
+    public function partnr()
+    {
+        return $this->belongsTo(Partners::class, 'partner_id', 'id');
+    }
+    
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id', 'id');
+    }
 }
