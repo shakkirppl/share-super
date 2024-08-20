@@ -33,6 +33,9 @@ Route::get('/', function () {
     return view('login');
 });
 Route::get('/generate-pdf', function () {
+    $pdf = Pdf::loadHTML('<h1>Hello, World!</h1>');
+return $pdf->download('test.pdf');
+
     $data = [
         'title' => 'Welcome to Laravel PDF',
         'date' => date('m/d/Y')
