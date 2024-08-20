@@ -9,7 +9,7 @@ use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\PartnersController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\BankTransfarController;
-use PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
