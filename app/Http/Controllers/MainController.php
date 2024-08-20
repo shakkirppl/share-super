@@ -284,27 +284,7 @@ class MainController extends Controller
                             }
                         }
                         // change start
-                        try {
-                          $pdf = PDF::loadView('pdf.monthly_share_report', ['data' => $data, 'month' => $month, 'year' => $year, 'partnerName' => $partnerName, 'contact_number' => $contact_number, 'transfer' => $transfer]);
-                          $fileName = 'monthly_share_report_' . $partner->name . '.pdf';
-                          $tempFilePath = $directoryPath . '/' . $fileName;
-                          
-                          // Save PDF
-                          $pdf->save($tempFilePath);
-                          
-                          // Ensure file was saved and has content
-                          if (!file_exists($tempFilePath) || filesize($tempFilePath) == 0) {
-                              throw new \Exception('Failed to generate PDF or PDF file is empty.');
-                          }
-                          
-                          // Add the PDF to the ZIP
-                          $zip->addFile($tempFilePath, $fileName);
-                      } catch (\Exception $e) {
-                          // Log error and continue
-                          \Log::error('PDF Generation Error: ' . $e->getMessage());
-                          continue;
-                      }
-                      
+                        
                         // change end
                         //  return view('pdf.monthly_share_report',['data'=>$data,'month'=>$month,'year'=>$year,'partnerName'=>$partnerName,'contact_number'=>$contact_number,'transfer'=>$transfer]);
                         if (!empty($data)) {

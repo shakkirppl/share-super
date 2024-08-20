@@ -9,7 +9,7 @@ use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\PartnersController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\BankTransfarController;
-
+use PDF;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,7 +32,16 @@ Route::get('/clear', function() {
 Route::get('/', function () {
     return view('login');
 });
+Route::get('/generate-pdf', function () {
+    $data = [
+        'title' => 'Welcome to Laravel PDF',
+        'date' => date('m/d/Y')
+    ];
 
+    $pdf = PDF::loadView('myPDF', $data);
+
+    return $pdf->download('document.pdf');
+});
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
