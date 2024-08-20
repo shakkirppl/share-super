@@ -9,6 +9,7 @@ use DB;
 use App\Models\PaymentVoucher;
 use App\Models\ReceiptVoucher;
 use App\Models\PartnerStore;
+use App\Models\BankTransfar;
 use App\Models\Partners;
 use App\Models\User;
 use Carbon\Carbon;
@@ -228,7 +229,7 @@ class MainController extends Controller
         //  return $request->all();
             $month = $request->select_month;
             $directoryPath = storage_path('app/public/reports');
-    
+            $selectedmonth = $request->select_month;
             if ($month) {
                 $startDate = Carbon::parse($month)->startOfMonth()->toDateString();
                 $endDate = Carbon::parse($month)->endOfMonth()->toDateString();
@@ -270,7 +271,7 @@ class MainController extends Controller
                             $invest_detail = PartnerStore::where('partner_id', $partner->id)
                                 ->where('store_id', $store->store_id)
                                 ->first();
-    
+                                $transfer=BankTransfar::where('month',$selectedmonth)->where('partner_id',$partner->id)->get();
                             if ($invest_detail) {
                                 $data[] = [
                                     'title' => 'Monthly Share Report',
@@ -283,7 +284,7 @@ class MainController extends Controller
                             }
                         }
                         
-                        //  return view('pdf.monthly_share_report',['data'=>$data,'month'=>$month,'year'=>$year,'partnerName'=>$partnerName,'contact_number'=>$contact_number]);
+                         return view('pdf.monthly_share_report',['data'=>$data,'month'=>$month,'year'=>$year,'partnerName'=>$partnerName,'contact_number'=>$contact_number,'transfer'=>$transfer]);
                         if (!empty($data)) {
                             $pdf = PDF::loadView('pdf.monthly_share_report', ['data' => $data,'month'=>$month,'year'=>$year,'partnerName'=>$partnerName,'contact_number'=>$contact_number]);
                             $fileName = 'monthly_share_report_' . $partner->name . '.pdf';

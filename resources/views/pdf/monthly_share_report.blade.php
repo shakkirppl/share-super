@@ -14,18 +14,39 @@
                 display: none;
             }
         }
-        th {
+        th, td {
             border: 1px solid black;
             border-collapse: collapse;
             border-style: dotted;
+            padding: 4px;
+        }
+        .heading {
+            background-color: #d3d3d3; /* Light grey background */
+            font-weight: bold;
+        }
+        .shop-details {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .shop-logo {
+            max-width: 100px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div style="width:16cm; padding:0.5cm; margin:0cm; border:solid 0px #304346">
+        <!-- Shop Logo, Name, and Address -->
+        <div class="shop-details">
+            <img src="{{url('/admin/images/logo/login.jpg')}}" alt="Shop Logo" class="shop-logo"><br>
+            <strong>Ziya </strong><br>
+            Qatar Qasiya<br>
+            9633740021
+        </div>
+
         <table border="0" width="100%">
             <tr>
-                <td colspan="3" align="center"><strong>Monthly Share Report</strong></td>
+                <td colspan="3" align="center"><strong>Partner Statement</strong></td>
             </tr>
             <tr>
                 <td>Name: <strong>{{$partnerName}}</strong></td>
@@ -40,7 +61,7 @@
             <tr> 
                 <td colspan="3">
                     <table border="0" width="100%" cellspacing="0" cellpadding="4">
-                        <tr>
+                        <tr class="heading">
                             <th>Date</th>
                             <th>Description</th>
                             <th>Debit</th>
@@ -53,47 +74,55 @@
                             <td>0</td>
                         </tr>
                         @php
-    $totalProfit = 0;
-@endphp
+                            $totalProfit = 0;
+                        @endphp
                         @foreach($data as $da)
                         <tr>
-                        @php
-        $totalProfit += $da['profit'];
-    @endphp
+                            @php
+                                $totalProfit += $da['profit'];
+                            @endphp
                             <td>{{ $da['date'] }}</td>
-                            <td>Profit Share({{ $da['percentage'] }})%-{{ $da['store_name'] }}</td>
+                            <td>Profit Share ({{ $da['percentage'] }}%) - {{ $da['store_name'] }}</td>
                             <td>{{ $da['profit'] }}</td>
                             <td></td>
                         </tr>
                         @endforeach
+                        @php
+                            $totaltransfar = 0;
+                        @endphp
+                        @foreach($transfer as $trans)
+                        <tr>
+                            @php
+                                $totaltransfar += $trans->amount;
+                            @endphp
+                            <td></td>
+                            <td>Bank Transfer</td>
+                            <td></td>
+                            <td>{{$trans->amount}}</td>
+                        </tr>
+                        @endforeach
+                        
                         <tr>
                             <td></td>
                             <td>Closing Balance</td>
                             <td>0</td>
                             <td>0</td>
                         </tr>
-                        <tr><td colspan="4">----------------------------------------------------------------------------------------------------</td></tr>
+                        <!-- <tr><td colspan="4">----------------------------------------------------------------------------------------------------</td></tr> -->
                         <tr>
                             <td colspan="2" align="right"><strong>Total:</strong></td>
                             <td><strong>{{ $totalProfit }}</strong></td>
-                            <td><strong>{{ $totalProfit }}</strong></td>
+                            <td><strong>{{ $totaltransfar }}</strong></td>
                         </tr>
-                        <tr><td colspan="4">----------------------------------------------------------------------------------------------------</td></tr>
+                        <!-- <tr><td colspan="4">----------------------------------------------------------------------------------------------------</td></tr> -->
                     </table>
                 </td>
             </tr>
-            <tr>
+            <!-- <tr>
                 <td colspan="3">&nbsp;</td>
-            </tr>
+            </tr> -->
         </table>
     </div>
-    <div style="padding-left:18px" id="buttons">
-        <button onclick="window.print(); return false">Print</button>
-        @if(Request::get('destination'))
-        <button onclick="window.location='{{ URL::to(Request::get('destination')) }}'; return false">Close</button>
-        @else
-        <button onclick="window.close(); return false">Close</button>
-        @endif
-    </div>
+
 </body>
 </html>

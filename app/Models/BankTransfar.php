@@ -15,24 +15,29 @@ class BankTransfar extends Model
     use HasFactory,SoftDeletes;
     public static function create_bank_transfar($request)
     {
-        if($request->hasFile('document')){
+        if ($request->hasFile('document')) {
             $document = $request->file('document');
             
-                            $i='0';
-           $randomId       =   rand(1,99999);
-           $i++;
-           
-            $fileOriginalName = $document->getClientOriginalExtension();
-           $fileNewName =$randomId.$i = time() .'.'. $fileOriginalName;
+            // Generate a unique filename
+            $randomId = rand(1, 99999);
+            $timestamp = time();
+            $fileExtension = $document->getClientOriginalExtension();
+            $fileNewName = $randomId . '_' . $timestamp . '.' . $fileExtension;
+        
+            // Define the destination path
             $destinationPath = 'uploads/document';
-           $document->move($destinationPath, $fileNewName, 'public'); //here image
-          }
+        
+            // Move the file to the destination path
+            $document->move(public_path($destinationPath), $fileNewName);
+        
+            // Update the request with the new file name
+            $request['document'] = $fileNewName;
+        }
        
         $request['user_id']=Auth::user()->id;
         $request['in_time']=date('H:i:s');
         $invoice_no =  InvoiceNumber::ReturnInvoice('bank_transfar',0);
         $request['invoice_no']=$invoice_no;
-        $request['document']=$fileNewName;
         $master=self::create($request->all());
         InvoiceNumber::updateinvoiceNumber('bank_transfar',0);
 
