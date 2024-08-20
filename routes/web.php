@@ -8,6 +8,7 @@ use App\Http\Controllers\CountryController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\PartnersController;
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\BankTransfarController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,7 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::get('monthly-share-report-store-wise', [MainController::class,'monthly_share_report_store_wise'])->name('monthly-share-report-store-wise');
     Route::get('monthly-share-report-partner-wise', [MainController::class,'monthly_share_report_partner_wise'])->name('monthly-share-report-partner-wise');
     Route::get('monthly-share-report-partner-wise-generate-pdf', [MainController::class,'monthly_share_report_partner_wise_generate_pdf'])->name('monthly-share-report-partner-wise-generate-pdf');
-    
+    Route::resource('bank-transfer', BankTransfarController::class);
    
     
 });

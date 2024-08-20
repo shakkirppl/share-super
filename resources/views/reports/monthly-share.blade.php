@@ -95,5 +95,14 @@
     $(document).ready( function () {
     $('#value-table').DataTable();
 } );
+function validateForm() {
+        var month = document.getElementById('month').value;
+        if (month === '') {
+            alert('Select the Month');
+            return false; // Prevent form submission
+        }
+        return true; // Allow form submission
+    }
+
 </script>
 @endsection
