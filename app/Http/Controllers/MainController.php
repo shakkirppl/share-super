@@ -286,9 +286,9 @@ class MainController extends Controller
                         // change start
                         
                         // change end
-                        //  return view('pdf.monthly_share_report',['data'=>$data,'month'=>$month,'year'=>$year,'partnerName'=>$partnerName,'contact_number'=>$contact_number,'transfer'=>$transfer]);
+                        //  return view('pdf.monthly_share_report',['data'=>$data,'month'=>$month,'year'=>$year,'partnerName'=>$partnerName,'contact_number'=>$contact_number,'transfer'=>$transfer,'endDate'=>$endDate]);
                         if (!empty($data)) {
-                            $pdf = PDF::loadView('pdf.monthly_share_report', ['data' => $data,'month'=>$month,'year'=>$year,'partnerName'=>$partnerName,'contact_number'=>$contact_number,'transfer'=>$transfer]);
+                            $pdf = PDF::loadView('pdf.monthly_share_report', ['data' => $data,'month'=>$month,'year'=>$year,'partnerName'=>$partnerName,'contact_number'=>$contact_number,'transfer'=>$transfer,'endDate'=>$endDate]);
                             $fileName = 'monthly_share_report_' . $partner->name . '.pdf';
                             $tempFilePath = $directoryPath . '/' . $fileName;
                             $pdf->save($tempFilePath);
