@@ -90,12 +90,11 @@ class PartnersController extends Controller
         return $e->getMessage();
       }    
     }  
-    public function destroy(Partners $partners) 
+    public function destroy(Partners $partner) 
     {
-       
         try {
-            DB::transaction(function () use ($partners) {
-            $partners->delete();
+            DB::transaction(function () use ($partner) {
+            $partner->delete();
         }); 
             return redirect()->route('partners.index')->with('success','Partners deleted successfully');
         } catch (\Exception $e) {
