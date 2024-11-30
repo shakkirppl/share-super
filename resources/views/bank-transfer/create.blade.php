@@ -15,7 +15,7 @@
                   
                         <div class="row">
                         <div class="col-md-6">
-                                 <h4 class="card-title">New Transfer</h4>
+                                 <h4 class="card-title">New Payment </h4>
                         </div>
                            <div class="col-md-6 heading">
                              <a href="{{ route('bank-transfer.index') }}" class="backicon"><i class="mdi mdi-backburger"></i></a>
@@ -49,8 +49,10 @@
                           <label class="col-sm-2 col-form-label required">Type </label>
                           <div class="col-sm-9">
                         <select class="form-control form-control-lg" id="type" name="type">
-                      <option value="BANK">BANK</option>
+                      <option value="BANK">BANK TRANSFER </option>
                      <option value="CASH">CASH</option>
+                      <option value="CHEQUE">CHEQUE</option>
+                     
                        </select>
                           </div>
                         </div>

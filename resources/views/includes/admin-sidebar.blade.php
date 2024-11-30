@@ -53,7 +53,7 @@
           <li class="nav-item">
             <a class="nav-link"  href="{{URL::to('bank-transfer')}}" aria-expanded="false" aria-controls="charts">
             <i class="mdi mdi-account-check menu-icon"></i>
-              <span class="menu-title">Bank Transfer</span>
+              <span class="menu-title">Payment</span>
             </a>
           </li>
           <li class="nav-item">

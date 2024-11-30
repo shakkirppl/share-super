@@ -9,7 +9,7 @@
                     
                      <div class="row">
                     <div class="col-6 col-md-6 col-sm-6 col-xs-12" >
-                             <h4 class="card-title">Bank Transfer</h4>
+                             <h4 class="card-title">Payment </h4>
                     </div>
                     <div class="col-6 col-md-6 col-sm-6 col-xs-12  heading" style="text-align:end;">
                     <a href="{{ route('bank-transfer.create') }}" class="newicon"><i class="mdi mdi-new-box"></i></a>

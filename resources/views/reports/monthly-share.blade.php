@@ -70,7 +70,19 @@
                                             <td>{{ number_format($store['expense'], 2) }}</td>
                                             <td>{{ number_format($store['profit'], 2) }}</td>
                                             <td>
-                                                <!-- Add actions here, if needed -->
+                                              <form class="form-sample" action="{{ url('monthly-share-report-store-wise-generate-pdf') }}" method="get">
+    {{ csrf_field() }}
+    
+    <input type="hidden" class="form-control" name="select_month" id="select_month" value="{{ $selectmonth }}" required />
+    
+    <input type="hidden" class="form-control" name="store_id" id="store_id" value="{{ $store['store_id'] }}" required />
+    
+    <div class="col-md-2 col-sm-6 col-xs-12 mt-2">
+        <div class="submitbutton">
+            <button type="submit" class="btn btn-primary mb-2 submit">Generate PDF</button>
+        </div>
+    </div>
+</form>
                                             </td>
                                         </tr>
                                     @endforeach

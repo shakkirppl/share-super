@@ -26,13 +26,68 @@ class MainController extends Controller
     
     
   
+  public function monthly_share_report_store_wise_generate_pdf(Request $request)
+    {
+      // return $request->all();
+        try {
+          $store=Store::find($request->store_id);
+    
+          $month = $request->select_month;
+      
+      $startDate = Carbon::parse($month)->startOfMonth()->toDateString();
+
+// Get the end date of the month
+      $endDate = Carbon::parse($month)->endOfMonth()->toDateString();
+  
+      $income=ReceiptVoucher::where('store_id',$store->id)->WhereBetween('in_date',[$startDate,$endDate])->sum('total_amount');
+      $expense=PaymentVoucher::where('store_id',$store->id)->WhereBetween('in_date',[$startDate,$endDate])->sum('total_amount');
+      $profit=$income-$expense;
+      $name= $store->name;
+     
+      $receipt=ReceiptVoucher::with('receipt')->where('store_id',$store->id)->WhereBetween('in_date',[$startDate,$endDate])->get();
+    $payment=PaymentVoucher::with('expense')->where('store_id',$store->id)->WhereBetween('in_date',[$startDate,$endDate])->get();
+
+ 
+      $pdf = PDF::loadView('pdf.monthly_share_report_store_wise', [
+    'month' => $month,
+    'name' => $name,
+    'expense' => $expense,
+    'income' => $income,
+    'profit' => $profit,
+    'receipt'=>$receipt,
+    'payment'=>$payment,
+]);
+return $pdf->download('income-statement.pdf');
+
+    } catch (\Exception $e) {
+        return $e->getMessage();
+      }
+    }
  public function monthly_share_report_store_wise(Request $request)
     {
       // return $request->all();
         try {
           $user=User::find(Auth::user()->id);
           $store=Store::get();
-          $fromDate =$user->created_at;
+          $receipt = ReceiptVoucher::orderBy('id','ASC')->first();
+        $payment=PaymentVoucher::orderBy('id','ASC')->first();
+        if ($receipt && $payment) {
+    // Compare dates if both records are found
+    if ($receipt->in_date > $payment->in_date) {
+        $fromDate = $receipt->in_date;
+    } else {
+        $fromDate = $payment->in_date;
+    }
+} elseif ($receipt) {
+    // If only receipt is found
+    $fromDate = $receipt->in_date;
+} elseif ($payment) {
+    // If only payment is found
+    $fromDate = $payment->in_date;
+} else {
+    // Handle the case where neither receipt nor payment is found
+    $fromDate =  Carbon::now(); // Set a default value or handle it as needed
+}
 
           
           $toDate = Carbon::now();
@@ -62,6 +117,7 @@ class MainController extends Controller
         'income' => $income,
         'expense' => $expense,
         'profit' => $profit,
+        'store_id'=>$stor->id,
     ];
       }
 
@@ -79,7 +135,25 @@ class MainController extends Controller
           $user=User::find(Auth::user()->id);
           $store=Store::get();
           $partners=Partners::get();
-          $fromDate =$user->created_at;
+               $receipt = ReceiptVoucher::orderBy('id','ASC')->first();
+        $payment=PaymentVoucher::orderBy('id','ASC')->first();
+        if ($receipt && $payment) {
+    // Compare dates if both records are found
+    if ($receipt->in_date > $payment->in_date) {
+        $fromDate = $receipt->in_date;
+    } else {
+        $fromDate = $payment->in_date;
+    }
+} elseif ($receipt) {
+    // If only receipt is found
+    $fromDate = $receipt->in_date;
+} elseif ($payment) {
+    // If only payment is found
+    $fromDate = $payment->in_date;
+} else {
+    // Handle the case where neither receipt nor payment is found
+    $fromDate =  Carbon::now(); // Set a default value or handle it as needed
+}
           $toDate = Carbon::now();
           $start = Carbon::parse($fromDate)->startOfMonth();
           $end = Carbon::parse($toDate)->endOfMonth();
