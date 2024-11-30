@@ -67,7 +67,7 @@ Route::middleware('auth')->group(function () {
     Route::get('store.partners/{id}', [StoreController::class,'store_partners'])->name('store.partners');
     Route::get('/autocomplete', [PartnersController::class, 'autocomplete'])->name('autocomplete');
     Route::post('/store/partners', [StoreController::class, 'storePartners'])->name('store.partnters');
-
+    
     Route::get('monthly-share-report-store-wise', [MainController::class,'monthly_share_report_store_wise'])->name('monthly-share-report-store-wise');
     Route::get('monthly-share-report-store-wise-generate-pdf', [MainController::class,'monthly_share_report_store_wise_generate_pdf'])->name('monthly-share-report-store-wise-generate-pdf');
     
